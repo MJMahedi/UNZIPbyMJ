@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# electron builds
+dist/
+out/
+build/
+
+# macOS junk
+.DS_Store
+
+# logs
+*.log
+
+# electron cache
+*.asar
+
+# optional
+package-lock.json

@@ -1,0 +1,23 @@
+{
+  "name": "zip-unzip-tool",
+  "productName": "ZipTool",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^42.3.3",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.10"
+  },
+  "build": {
+    "appId": "com.ziptool.app",
+    "mac": {
+      "target": "dmg"
+    }
+  }
+}

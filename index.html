@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: -apple-system;
+  text-align: center;
+  padding-top: 60px;
+}
+
+button {
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  background: #007aff;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<h3>ZIP Extract Tool</h3>
+
+<button onclick="unzip()">Select ZIP & Extract</button>
+
+<p id="status"></p>
+
+<script>
+const { ipcRenderer } = require('electron');
+
+async function unzip() {
+  const result = await ipcRenderer.invoke('unzip');
+  document.getElementById('status').innerText = 'Extraction Done ✔';
+}
+</script>
+
+</body>
+</html>
