@@ -1,27 +1,30 @@
-async function extract() {
-  try {
-    const res = await window.api.extractArchive();
+const bar = document.getElementById('bar');
+const status = document.getElementById('status');
 
-    if (res?.success) {
-      alert("✅ Extract Done!");
-    } else {
-      alert("❌ " + (res?.error || "Failed"));
-    }
-  } catch (err) {
-    alert(err.message);
+window.api.onProgress((data) => {
+  bar.style.width = data.percent + '%';
+  status.innerText = data.message;
+
+  // 🔥 success highlight
+  if (data.percent === 100) {
+    status.style.color = "#22c55e";
   }
+});
+
+async function extract() {
+  status.innerText = "Selecting file...";
+  bar.style.width = "0%";
+  await window.api.extract();
 }
 
-async function createArchive() {
-  try {
-    const res = await window.api.createArchive();
+async function create() {
+  status.innerText = "Creating archive...";
+  bar.style.width = "0%";
+  await window.api.create();
+}
 
-    if (res?.success) {
-      alert("✅ Archive Created!");
-    } else {
-      alert("❌ " + (res?.error || "Failed"));
-    }
-  } catch (err) {
-    alert(err.message);
-  }
+async function cancel() {
+  await window.api.cancel();
+  status.innerText = "Cancelled";
+  bar.style.width = "0%";
 }

@@ -1,6 +1,8 @@
+
+// ---------------- EXTRACT ----------------
 const { spawn } = require('child_process');
 
-function extractArchive(filePath, outputPath) {
+function extractArchive(filePath, outputPath, progressCb) {
   return new Promise((resolve, reject) => {
 
     const p = spawn('7zz', [
@@ -10,19 +12,55 @@ function extractArchive(filePath, outputPath) {
       '-y'
     ]);
 
-    let err = '';
+    let lastPercent = 0;
+    let errorText = '';
 
-    p.stderr.on('data', d => err += d.toString());
+    p.stdout.setEncoding('utf8');
+    p.stderr.setEncoding('utf8');
 
-    p.on('close', code => {
-      if (code === 0) resolve(true);
-      else reject(new Error(err));
+    // ✅ REAL TIME PARSING
+    p.stdout.on('data', (data) => {
+      const text = data.toString();
+
+      // 🔥 match percentage from output
+      const match = text.match(/(\d+)%/);
+
+      if (match) {
+        const percent = parseInt(match[1]);
+
+        if (percent > lastPercent) {
+          lastPercent = percent;
+          progressCb?.(percent, `Extracting... ${percent}%`);
+        }
+      } else {
+        progressCb?.(lastPercent, 'Processing...');
+      }
+    });
+
+    p.stderr.on('data', (data) => {
+      errorText += data.toString();
+    });
+
+    p.on('error', (err) => {
+      reject(err);
+    });
+
+    p.on('close', (code) => {
+      if (code === 0) {
+        progressCb?.(100, "Done");
+        resolve(true);
+      } else {
+        reject(new Error(errorText || "Extraction failed"));
+      }
     });
 
   });
 }
 
-function createArchive(outputFile, inputPath) {
+
+
+// ---------------- CREATE ARCHIVE ----------------
+function createArchive(outputFile, inputPath, progressCb) {
   return new Promise((resolve, reject) => {
 
     const p = spawn('7zz', [
@@ -33,11 +71,15 @@ function createArchive(outputFile, inputPath) {
 
     let err = '';
 
+    p.stdout.on('data', () => {
+      progressCb?.(50, "Compressing...");
+    });
+
     p.stderr.on('data', d => err += d.toString());
 
     p.on('close', code => {
       if (code === 0) resolve(true);
-      else reject(new Error(err));
+      else reject(new Error(err || "Create failed"));
     });
 
   });

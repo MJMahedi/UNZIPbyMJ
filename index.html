@@ -1,98 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Archive Utility Pro</title>
+  <title>Archive Pro</title>
 
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI";
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      font-family: -apple-system;
+      background: #0a0f1c;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      color: white;
     }
 
     .box {
-      width: 420px;
-      padding: 30px;
-      background: rgba(255,255,255,0.06);
+      width: 460px;
+      background: #111827;
+      padding: 25px;
       border-radius: 16px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-      text-align: center;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    p {
-      color: #cbd5e1;
-      font-size: 12px;
-      margin-bottom: 25px;
-    }
-
-    .btn {
+    button {
       width: 100%;
       padding: 12px;
-      margin: 8px 0;
+      margin-top: 10px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: 0.2s;
     }
 
-    .extract {
-      background: #3b82f6;
-      color: white;
+    .extract { background: #3b82f6; color: white; }
+    .create { background: #22c55e; color: white; }
+    .cancel { background: #ef4444; color: white; }
+
+    .bar {
+      width: 100%;
+      height: 10px;
+      background: #1f2937;
+      border-radius: 20px;
+      margin-top: 20px;
+      overflow: hidden;
     }
 
-    .extract:hover {
-      background: #2563eb;
-    }
-
-    .create {
+    .progress {
+      width: 0%;
+      height: 100%;
       background: #22c55e;
-      color: white;
+      transition: width 0.15s;
     }
 
-    .create:hover {
-      background: #16a34a;
-    }
-
-    .drag {
-      margin-top: 15px;
-      padding: 20px;
-      border: 2px dashed rgba(255,255,255,0.3);
-      border-radius: 12px;
+    .status {
       font-size: 12px;
-      color: #94a3b8;
+      margin-top: 10px;
+      color: #cbd5e1;
     }
   </style>
 </head>
 
 <body>
   <div class="box">
-    <h1>Archive Utility Pro</h1>
-    <p>ZIP • RAR • 7Z • TAR • GZ • DMG</p>
 
-    <button class="btn extract" onclick="extract()">
-      📦 Extract Archive
-    </button>
+    <h2>Archive Utility Pro</h2>
 
-    <button class="btn create" onclick="createArchive()">
-      🗜️ Create Archive
-    </button>
+    <button class="extract" onclick="extract()">Extract Archive</button>
+    <button class="create" onclick="create()">Create Archive</button>
+    <button class="cancel" onclick="cancel()">Cancel</button>
 
-    <div class="drag">
-      Drag & Drop files here (coming soon)
+    <div class="bar">
+      <div class="progress" id="bar"></div>
     </div>
+
+    <div class="status" id="status">Ready</div>
+
   </div>
 
   <script src="renderer.js"></script>

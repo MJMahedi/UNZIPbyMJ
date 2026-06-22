@@ -1,6 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
-  extractArchive: () => ipcRenderer.invoke('extract-archive'),
-  createArchive: () => ipcRenderer.invoke('create-archive')
+  extract: () => ipcRenderer.invoke('extract'),
+  create: () => ipcRenderer.invoke('create'),
+  cancel: () => ipcRenderer.invoke('cancel'),
+  onProgress: (cb) => ipcRenderer.on('progress', (_, d) => cb(d))
 });
