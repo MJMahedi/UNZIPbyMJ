@@ -2,15 +2,26 @@ async function extract() {
   try {
     const res = await window.api.extractArchive();
 
-    if (!res) return;
-
-    if (res.type === 'docx') {
-      alert(res.message);
-      return;
+    if (res?.success) {
+      alert("✅ Extract Done!");
+    } else {
+      alert("❌ " + (res?.error || "Failed"));
     }
-
-    alert(`Extracted successfully!\nFolder: ${res.folder}`);
   } catch (err) {
-    alert('Error: ' + err.message);
+    alert(err.message);
+  }
+}
+
+async function createArchive() {
+  try {
+    const res = await window.api.createArchive();
+
+    if (res?.success) {
+      alert("✅ Archive Created!");
+    } else {
+      alert("❌ " + (res?.error || "Failed"));
+    }
+  } catch (err) {
+    alert(err.message);
   }
 }

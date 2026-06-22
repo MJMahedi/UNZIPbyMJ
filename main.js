@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const fs = require('fs');
-const { extractArchive } = require('./services/archiver');
+const { extractArchive, createArchive } = require('./services/archiver');
 
 let win;
 
@@ -9,7 +8,6 @@ function createWindow() {
   win = new BrowserWindow({
     width: 500,
     height: 350,
-    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -22,36 +20,46 @@ function createWindow() {
 
 app.whenReady().then(createWindow);
 
+// ================= EXTRACT =================
 ipcMain.handle('extract-archive', async () => {
   const file = await dialog.showOpenDialog({
-    properties: ['openFile'],
-    filters: [
-      { name: 'Archives', extensions: ['zip', 'rar', 'docx'] }
-    ]
+    properties: ['openFile']
   });
 
   if (file.canceled) return;
 
-  const dest = await dialog.showOpenDialog({
+  const folder = await dialog.showOpenDialog({
     properties: ['openDirectory']
   });
 
-  if (dest.canceled) return;
+  if (folder.canceled) return;
 
-  const archivePath = file.filePaths[0];
-  const baseName = path.basename(archivePath, path.extname(archivePath));
-  const finalPath = path.join(dest.filePaths[0], baseName);
+  const res = await extractArchive(
+    file.filePaths[0],
+    folder.filePaths[0]
+  );
 
-  if (!fs.existsSync(finalPath)) {
-    fs.mkdirSync(finalPath);
-  }
+  return { success: true, res };
+});
 
-  const result = await extractArchive(archivePath, finalPath);
+// ================= CREATE =================
+ipcMain.handle('create-archive', async () => {
+  const folder = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
 
-  return {
-    success: true,
-    folder: finalPath,
-    type: result.type || 'unknown',
-    message: result.message || 'Extracted successfully'
-  };
+  if (folder.canceled) return;
+
+  const save = await dialog.showSaveDialog({
+    defaultPath: 'archive.zip'
+  });
+
+  if (save.canceled) return;
+
+  const res = await createArchive(
+    save.filePath,
+    folder.filePaths[0]
+  );
+
+  return { success: true, res };
 });
