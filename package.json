@@ -4,15 +4,17 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "ELECTRON_DISABLE_GPU=1 electron .",
     "dist": "electron-builder"
   },
   "devDependencies": {
-    "electron": "^42.3.3",
+    "electron": "^38.8.6",
     "electron-builder": "^24.13.3"
   },
   "dependencies": {
-    "adm-zip": "^0.5.10"
+    "adm-zip": "^0.5.17",
+    "node-7z": "^3.0.0",
+    "node-unrar-js": "^2.0.2"
   },
   "build": {
     "appId": "com.ziptool.app",

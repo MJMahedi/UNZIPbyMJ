@@ -1,40 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-body {
-  font-family: -apple-system;
-  text-align: center;
-  padding-top: 60px;
-}
+  <title>Archive Utility</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-button {
-  padding: 12px 20px;
-  font-size: 14px;
-  border-radius: 8px;
-  border: none;
-  background: #007aff;
-  color: white;
-  cursor: pointer;
-}
-</style>
+    .box {
+      width: 420px;
+      height: 260px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    button {
+      margin-top: 40px;
+      padding: 12px 18px;
+      border: none;
+      background: #007aff;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #005fd1;
+    }
+
+    .title {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .sub {
+      color: gray;
+      font-size: 12px;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="box">
+    <div class="title">Archive Utility</div>
+    <div class="sub">ZIP • RAR • 7Z • TAR • GZ</div>
+<button onclick="extract()">Extract File</button>
+    <button onclick="extract()">
+      Extract Archive
+    </button>
+  </div>
 
-<h3>ZIP Extract Tool</h3>
-
-<button onclick="unzip()">Select ZIP & Extract Your File</button>
-
-<p id="status"></p>
-
-<script>
-const { ipcRenderer } = require('electron');
-
-async function unzip() {
-  const result = await ipcRenderer.invoke('unzip');
-  document.getElementById('status').innerText = 'Extraction Done ✔';
-}
-</script>
-
+  <script src="renderer.js"></script>
 </body>
 </html>

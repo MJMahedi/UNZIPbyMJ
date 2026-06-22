@@ -1,63 +1,57 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const AdmZip = require('adm-zip');
-const { ipcMain } = require('electron');
+const fs = require('fs');
+const { extractArchive } = require('./services/archiver');
 
-ipcMain.handle('unzip', async () => {
-  const zipFile = await dialog.showOpenDialog({
-    properties: ['openFile'],
-    filters: [{ name: 'Zip Files', extensions: ['zip'] }]
-  });
-
-  if (zipFile.canceled) return;
-
-  const folder = await dialog.showOpenDialog({
-    properties: ['openDirectory']
-  });
-
-  if (folder.canceled) return;
-
-  const zip = new AdmZip(zipFile.filePaths[0]);
-  zip.extractAllTo(folder.filePaths[0], true);
-
-  return true;
-});
 let win;
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 420,
-    height: 260,
+    width: 500,
+    height: 350,
     resizable: false,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
     }
   });
 
   win.loadFile('index.html');
 }
 
-async function unzipFile() {
-  const zipFile = await dialog.showOpenDialog({
+app.whenReady().then(createWindow);
+
+ipcMain.handle('extract-archive', async () => {
+  const file = await dialog.showOpenDialog({
     properties: ['openFile'],
-    filters: [{ name: 'Zip Files', extensions: ['zip'] }]
+    filters: [
+      { name: 'Archives', extensions: ['zip', 'rar', 'docx'] }
+    ]
   });
 
-  if (zipFile.canceled) return;
+  if (file.canceled) return;
 
-  const folder = await dialog.showOpenDialog({
+  const dest = await dialog.showOpenDialog({
     properties: ['openDirectory']
   });
 
-  if (folder.canceled) return;
+  if (dest.canceled) return;
 
-  const zip = new AdmZip(zipFile.filePaths[0]);
-  zip.extractAllTo(folder.filePaths[0], true);
+  const archivePath = file.filePaths[0];
+  const baseName = path.basename(archivePath, path.extname(archivePath));
+  const finalPath = path.join(dest.filePaths[0], baseName);
 
-  return 'Done';
-}
+  if (!fs.existsSync(finalPath)) {
+    fs.mkdirSync(finalPath);
+  }
 
-app.whenReady().then(createWindow);
+  const result = await extractArchive(archivePath, finalPath);
 
-module.exports = { unzipFile };
+  return {
+    success: true,
+    folder: finalPath,
+    type: result.type || 'unknown',
+    message: result.message || 'Extracted successfully'
+  };
+});
