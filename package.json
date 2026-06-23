@@ -1,25 +1,33 @@
 {
-  "name": "zip-unzip-tool",
+  "name": "archive-utility-pro",
   "productName": "ZipTool",
   "version": "1.0.0",
+  "author": "MJ Mahedi Hasan",
+  "description": "Fast archive tool (ZIP, RAR, 7Z)",
   "main": "main.js",
   "scripts": {
-    "start": "ELECTRON_DISABLE_GPU=1 electron .",
+    "start": "electron .",
     "dist": "electron-builder"
   },
   "devDependencies": {
-    "electron": "^38.8.6",
+    "electron": "^31.0.0",
     "electron-builder": "^24.13.3"
   },
   "dependencies": {
-    "adm-zip": "^0.5.17",
-    "node-7z": "^3.0.0",
-    "node-unrar-js": "^2.0.2"
+    "adm-zip": "^0.5.17"
   },
   "build": {
     "appId": "com.ziptool.app",
+    "productName": "ZipTool",
+    "files": [
+      "**/*"
+    ],
     "mac": {
-      "target": "dmg"
+      "target": "dmg",
+      "category": "public.app-category.utilities"
+    },
+    "dmg": {
+      "title": "ZipTool Installer"
     }
   }
 }
